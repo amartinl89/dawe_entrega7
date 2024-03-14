@@ -15,6 +15,15 @@ window.onload = function() {
 	video.load();
 	video.play();
 	
+	//a)
+	let botonPausa = document.getElementById("pausa");
+	botonPausa.onclick = pausar;
+	
+	//b)
+
+	//c)
+	let botonRotar = document.getElementById("rotar");
+	botonRotar.onclick = rotar;
 }
 
 function cambiarEfecto(e){
@@ -80,3 +89,39 @@ function byn(pos, r, g, b, data) {
 	data[pos * 4 + 2] = gris;
 }
 
+function pausar(){
+	let video = document.getElementById("video");
+	if (video.paused){
+		video.play();
+	} else {
+		video.pause();
+	}
+}
+
+function rotar(){
+
+	var bufferCanvas = document.getElementById("buffer");
+	var displayCanvas = document.getElementById("display");
+	var buffer = bufferCanvas.getContext("2d");
+	var display = displayCanvas.getContext("2d");
+
+	display.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+
+  // Rotar el canvas del buffer
+  buffer.save();
+  buffer.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+  buffer.translate(bufferCanvas.width / 2, bufferCanvas.height / 2);
+  buffer.rotate((rotationAngle += rotationSpeed) * Math.PI / 180); // Incrementa el ángulo de rotación
+  buffer.drawImage(video, -bufferCanvas.width / 2, -bufferCanvas.height / 2, bufferCanvas.width, bufferCanvas.height);
+  buffer.restore();
+
+  // Copiar el contenido rotado al canvas de visualización
+  display.drawImage(bufferCanvas, 0, 0, displayCanvas.width, displayCanvas.height);	
+  // Llama a la función nuevamente en el próximo cuadro de animación
+}
+
+// Variables para el control de la rotación
+var rotationAngle = 0; // Ángulo de rotación actual
+var rotationSpeed = 1; // Velocidad de rotación (en grados por cuadro)
+
+// Inicia la rotación indefinida

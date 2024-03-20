@@ -20,12 +20,20 @@ window.onload = function() {
 	botonPausa.onclick = pausar;
 	
 	//b)
+	let botonScifi = document.getElementById("scifi");
+    botonScifi.onclick = cambiarEfecto;
 
 	//c)
 	let botonRotar = document.getElementById("rotar");
 	botonRotar.onclick = salirRotacion;
 
 	//d)
+	loadAudio(clip).then(audio => {
+        let audioPlayer = new Audio();
+        audioPlayer.srcObject = new MediaStream([audio]);
+        audioPlayer.play();
+    }).catch(error => console.error(error));
+
 
 	//e)
 	let botonPiP = document.getElementById("pip");
@@ -37,6 +45,8 @@ function cambiarEfecto(e){
 	var id = e.target.getAttribute("id");
 	if ( id == "byn" ){
 		efecto = byn;
+	} else if (id == "scifi") {
+            efecto = scifi;
 	} else {
 		efecto = null;
 	}
@@ -144,6 +154,7 @@ function pausar(){
 	var rotationAngle = 0; 
 	var rotationSpeed = 0.5; 
 	var salir = false;
+
 function salirRotacion(){
 	if (salir){
 		salir = false;
@@ -154,6 +165,7 @@ function salirRotacion(){
 	}
 }
 salirPiP = false;
+
 function activarPiP(){
 	if (salirPiP == true){
 		salirPiP = false;
@@ -164,6 +176,7 @@ function activarPiP(){
 		formatoPiP();
 	}
 }
+
 async function formatoPiP() {
 	
     let canvasVideo = document.createElement('video');
@@ -187,6 +200,33 @@ async function formatoPiP() {
 		// Salir del modo Picture-in-Picture
 		await document.exitPictureInPicture();
 	}
+}
+
+function scifi(pos, r, g, b, data) {
+    var offset = pos * 4;
+    data[offset] = Math.round(255 - r);
+    data[offset+1] = Math.round(255 - g) ;
+    data[offset+2] = Math.round(255 - b) ;
+}
+
+function loadAudio(videoPath) {
+    return new Promise((resolve, reject) => {
+        let video = document.createElement('video');
+        video.src = videoPath + getFormatExtension();
+        video.onloadedmetadata = () => {
+            let audioTracks = video.captureStream().getAudioTracks();
+            if (audioTracks.length > 0) {
+                let audioStream = new MediaStream([audioTracks[0]]);
+                resolve(audioStream);
+            } else {
+                reject(new Error("No se encontraron pistas de audio en el video."));
+            }
+        };
+        video.onerror = (error) => {
+            reject(new Error(`Error al cargar el video desde ${videoPath}: ${error.message}`));
+        };
+        video.load();
+    });
 }
 
 

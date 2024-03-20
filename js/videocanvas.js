@@ -28,12 +28,14 @@ window.onload = function() {
 	botonRotar.onclick = salirRotacion;
 
 	//d)
-	loadAudio(clip).then(audio => {
-        let audioPlayer = new Audio();
-        audioPlayer.srcObject = new MediaStream([audio]);
-        audioPlayer.play();
-    }).catch(error => console.error(error));
-
+	let botonPlay = document.getElementById("play");
+	botonPlay.onclick = function() {
+        loadAudio("audio/soundtrack.mp3").then(audioStream => {
+            let audioPlayer = new Audio();
+            audioPlayer.srcObject = audioStream;
+            audioPlayer.play();
+        }).catch(error => console.error(error));
+    };
 
 	//e)
 	let botonPiP = document.getElementById("pip");

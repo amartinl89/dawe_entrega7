@@ -37,7 +37,7 @@ window.onload = function() {
 
 	//e)
 	let botonPiP = document.getElementById("pip");
-	botonPiP.onclick= activarPiP;
+	botonPiP.onclick = activarPiP;
 
 }
 
@@ -164,6 +164,7 @@ function salirRotacion(){
 		salir = true;
 	}
 }
+
 salirPiP = false;
 
 function activarPiP(){

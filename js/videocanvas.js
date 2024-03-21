@@ -1,5 +1,6 @@
 var efecto = null;
 var clip = "videos/demovideo1"; // nombre del vídeo, sin extensión
+var audio_path = "audio/soundtrack.mp3"
 
 window.onload = function() {
 
@@ -30,11 +31,13 @@ window.onload = function() {
 	//d)
 	let botonPlay = document.getElementById("play");
 	botonPlay.onclick = function() {
-        loadAudio("audio/soundtrack.mp3").then(audioStream => {
-            let audioPlayer = new Audio();
-            audioPlayer.srcObject = audioStream;
-            audioPlayer.play();
-        }).catch(error => console.error(error));
+        loadAudio(audio_path)
+        .then(audio => {
+            audio.play();
+        })
+        .catch(error => {
+            console.error("Error al cargar el audio:", error);
+        });
     };
 
 	//e)
@@ -212,24 +215,14 @@ function scifi(pos, r, g, b, data) {
     data[offset+2] = Math.round(255 - b) ;
 }
 
-function loadAudio(videoPath) {
-    return new Promise((resolve, reject) => {
-        let video = document.createElement('video');
-        video.src = videoPath + getFormatExtension();
-        video.onloadedmetadata = () => {
-            let audioTracks = video.captureStream().getAudioTracks();
-            if (audioTracks.length > 0) {
-                let audioStream = new MediaStream([audioTracks[0]]);
-                resolve(audioStream);
-            } else {
-                reject(new Error("No se encontraron pistas de audio en el video."));
-            }
-        };
-        video.onerror = (error) => {
-            reject(new Error(`Error al cargar el video desde ${videoPath}: ${error.message}`));
-        };
-        video.load();
+function loadAudio(audioPath) {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio(audioPath);
+    audio.addEventListener('canplaythrough', () => {
+      resolve(audio);
     });
+    audio.load();
+  });
 }
 
 
